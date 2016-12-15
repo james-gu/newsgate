@@ -23,11 +23,19 @@ $(document).ready(function(){
       
       // Make sure url we are inserting is not already in storage
       chrome.extension.getBackgroundPage().getUserlist(function(results) {
-        
+        var pattern = new RegExp(domain);
+        // update userGeneratedBlacklist only on unique urls
+        // use getUserlist(function(results) { console.log(results); }); to test in local storage
+        var unique = true;
+        results.forEach(function(url) {
+          if (pattern.test(url)) {
+            unique = false;
+          }
+        });
+        if (unique) {
+          chrome.extension.getBackgroundPage().updateBlacklist([domain], 'userGeneratedBlacklist');
+        } 
       })
-
-      // use getUserlist(function(results) { console.log(results); }); to test in local storage
-      chrome.extension.getBackgroundPage().updateBlacklist([domain], 'userGeneratedBlacklist');
     });
   });
 
